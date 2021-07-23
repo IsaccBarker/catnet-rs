@@ -5,4 +5,17 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "libcatnet"
+path = "src/lib.rs"
+crate-type = ["staticlib"]
+
+[[bin]]
+name = "catnetd"
+path = "driver/catnetd/main.rs"
+
 [dependencies]
+clap = "3.0.0-beta.2" # CLI stuff
+log = "0.4.14" # Logging facade (front end, provides logging macros)
+fern = "0.6.0" # Logging backend (actually logs the stuff)
+chrono = "0.4.19" # For time stuff
