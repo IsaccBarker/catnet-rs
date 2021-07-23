@@ -1,0 +1,10 @@
+[2021-07-23][16:05:26] [catnetd] (TRACE) trace
+[2021-07-23][16:05:26] [catnetd] (DEBUG) debug
+[2021-07-23][16:05:26] [catnetd] (INFO ) info
+[2021-07-23][16:05:26] [catnetd] (WARN ) warn
+[2021-07-23][16:05:26] [catnetd] (ERROR) error
+[2021-07-23][16:05:54] [catnetd] (TRACE) trace
+[2021-07-23][16:05:54] [catnetd] (DEBUG) debug
+[2021-07-23][16:05:54] [catnetd] (INFO ) info
+[2021-07-23][16:05:54] [catnetd] (WARN ) warn
+[2021-07-23][16:05:54] [catnetd] (ERROR) error

@@ -1,4 +1,5 @@
 use std::io;
+use fern::colors::{Color, ColoredLevelConfig};
 
 pub fn init(verbosity: u64) -> Result<(), fern::InitError> {
     let mut base_config = fern::Dispatch::new();
@@ -23,20 +24,32 @@ pub fn init(verbosity: u64) -> Result<(), fern::InitError> {
     let file_config = fern::Dispatch::new()
         .format(|out, message, record| {
             out.finish(format_args!(
-                "{}[{}][{}] {}",
+                "{} [{}] ({:5}) {}",
                 chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
                 record.target(),
                 record.level(),
                 message
             ))
         })
-        .chain(fern::log_file("program.log")?);
+        .chain(fern::log_file("catnetd.log")?);
 
     let stdout_config = fern::Dispatch::new()
         .format(|out, message, record| {
+            let colors =  ColoredLevelConfig::new()
+                .trace(Color::BrightBlack)
+                .debug(Color::BrightCyan)
+                .info(Color::BrightGreen)
+                .warn(Color::BrightYellow)
+                .error(Color::BrightRed);
+
+
             // special format for debug messages coming from our own crate.
             out.finish(format_args!(
-                "[{}] [{}] ({}) {}",
+                "{} [{}] ({:5}) {} {}",
+                format_args!(
+                    "\x1b[{}m",
+                    colors.get_color(&record.level()).to_fg_str()
+                ),
                 chrono::Local::now().format("%H:%M:%S"),
                 record.target(),
                 record.level(),

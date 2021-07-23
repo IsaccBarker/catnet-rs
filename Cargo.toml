@@ -17,5 +17,5 @@ path = "driver/catnetd/main.rs"
 [dependencies]
 clap = "3.0.0-beta.2" # CLI stuff
 log = "0.4.14" # Logging facade (front end, provides logging macros)
-fern = "0.6.0" # Logging backend (actually logs the stuff)
+fern = { version = "0.6.0", features = ["colored"] } # Logging backend (actually logs the stuff)
 chrono = "0.4.19" # For time stuff
