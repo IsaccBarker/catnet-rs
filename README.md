@@ -22,7 +22,6 @@ Either download a .tar.gz/.zip from the green *download* button above, or clone 
 git clone https://github.com/ZincSoft/CATNET.git
 ```
 ### Building
-![Building](assets/build.png)
 ```bash
 cargo install --path .
 # or
