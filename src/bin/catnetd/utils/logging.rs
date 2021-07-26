@@ -25,7 +25,7 @@ pub fn init(verbosity: u64) -> Result<(), fern::InitError> {
         .format(|out, message, record| {
             out.finish(format_args!(
                 "{} [{}] ({:5}) {}",
-                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
+                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S.%f]"),
                 record.target(),
                 record.level(),
                 message
@@ -45,7 +45,7 @@ pub fn init(verbosity: u64) -> Result<(), fern::InitError> {
 
             // special format for debug messages coming from our own crate.
             out.finish(format_args!(
-                "{} [{}] ({:5}) {} {}",
+                "{} [{}] ({:5}) {} {}\x1b[0m",
                 format_args!(
                     "\x1b[{}m",
                     colors.get_color(&record.level()).to_fg_str()
