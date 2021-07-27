@@ -1,5 +1,5 @@
-use std::io;
 use fern::colors::{Color, ColoredLevelConfig};
+use std::io;
 
 pub fn init(verbosity: u64) -> Result<(), fern::InitError> {
     let mut base_config = fern::Dispatch::new();
@@ -15,8 +15,14 @@ pub fn init(verbosity: u64) -> Result<(), fern::InitError> {
         }
 
         1 => base_config.level(log::LevelFilter::Debug),
-        69 => { println!("your very immature"); std::process::exit(-1) },
-        420 => { println!("hell yeah my guy"); std::process::exit(-1) },
+        69 => {
+            println!("your very immature");
+            std::process::exit(-1)
+        }
+        420 => {
+            println!("hell yeah my guy");
+            std::process::exit(-1)
+        }
         _2_or_more => base_config.level(log::LevelFilter::Trace),
     };
 
@@ -35,21 +41,17 @@ pub fn init(verbosity: u64) -> Result<(), fern::InitError> {
 
     let stdout_config = fern::Dispatch::new()
         .format(|out, message, record| {
-            let colors =  ColoredLevelConfig::new()
+            let colors = ColoredLevelConfig::new()
                 .trace(Color::BrightBlack)
                 .debug(Color::BrightCyan)
                 .info(Color::BrightGreen)
                 .warn(Color::BrightYellow)
                 .error(Color::BrightRed);
 
-
             // special format for debug messages coming from our own crate.
             out.finish(format_args!(
                 "{} [{}] ({:5}) {} {}\x1b[0m",
-                format_args!(
-                    "\x1b[{}m",
-                    colors.get_color(&record.level()).to_fg_str()
-                ),
+                format_args!("\x1b[{}m", colors.get_color(&record.level()).to_fg_str()),
                 chrono::Local::now().format("%H:%M:%S"),
                 record.target(),
                 record.level(),

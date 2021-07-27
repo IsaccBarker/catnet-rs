@@ -1,4 +1,4 @@
-use super::{Registrar, super::message::Message};
+use super::{super::message::base::Message, Registrar};
 
 impl Registrar {
     pub fn test_connection(&mut self, message: Message) -> Message {
@@ -8,4 +8,3 @@ impl Registrar {
         snd
     }
 }
-

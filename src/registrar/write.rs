@@ -1,12 +1,9 @@
 use mio::event::Event;
 use mio::net::TcpStream;
-use mio::Registry;
-use log::{trace, debug};
 
 use std::io::Write;
-use std::str::from_utf8;
 
-use super::{Registrar, event};
+use super::Registrar;
 
 impl Registrar {
     /// Reads data from the connection.

@@ -1,12 +1,11 @@
+use log::trace;
 use mio::event::Event;
 use mio::net::TcpStream;
-use mio::Registry;
-use log::{trace, debug};
 
 use std::io::Read;
 use std::str::from_utf8;
 
-use super::{Registrar, event};
+use super::{event, Registrar};
 
 impl Registrar {
     /// Reads data from the connection.
@@ -26,26 +25,26 @@ impl Registrar {
                     // connection or is done writing, then so are we.
                     break;
                 }
-                
+
                 Ok(n) => {
                     bytes_read += n;
                     if bytes_read == received_data.len() {
                         received_data.resize(received_data.len() + 1024, 0);
                     }
                 }
-            
+
                 // Would block "errors" are the OS's way of saying that the
                 // connection is not actually ready to perform this I/O operation.
                 Err(ref err) if event::would_block(err) => break,
                 Err(ref err) if event::interrupted(err) => continue,
                 // Other errors we'll consider fatal.
-                Err(err) => return Err(err)
-            } 
+                Err(err) => return Err(err),
+            }
         }
 
         if bytes_read != 0 {
             let received_data = &received_data[..bytes_read];
-        
+
             if let Ok(str_buf) = from_utf8(received_data) {
                 trace!("Received data: {}", str_buf.trim_end());
             } else {

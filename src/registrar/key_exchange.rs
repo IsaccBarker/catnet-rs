@@ -1,7 +1,5 @@
-use super::{Registrar, super::message::Message};
+use super::{super::message::base::Message, Registrar};
 
 impl Registrar {
-    pub fn exchange(&mut self, message: Message) {
-
-    }
+    pub fn exchange(&mut self, _message: Message) {}
 }

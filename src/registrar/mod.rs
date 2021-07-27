@@ -1,17 +1,17 @@
-mod event;
-mod read;
-mod write;
-mod test_connection;
-mod key_exchange;
 mod disconnect;
+mod event;
+mod key_exchange;
+mod read;
+mod test_connection;
+mod write;
 
-use std::net::ToSocketAddrs;
 use std::collections::HashMap;
+use std::net::ToSocketAddrs;
 
+use log::{debug, info, trace, warn};
 use mio::net::TcpListener;
 use mio::{Events, Interest, Poll, Token};
-use log::{trace, debug, info, warn};
-use snafu::{Snafu, ResultExt};
+use snafu::{ResultExt, Snafu};
 
 /// A token the allows us to identify which event is for which socket.
 const REGISTRAR: Token = Token(0);
@@ -21,9 +21,7 @@ const REGISTRAR: Token = Token(0);
 pub enum RegistrarError {
     /// Failed to construct a new poll.
     #[snafu(display("Failed to create a new poll. {}", source))]
-    NewPollFailure {
-        source: std::io::Error,
-    },
+    NewPollFailure { source: std::io::Error },
 
     /// Failed to poll.
     #[snafu(display("Failed to poll address {}. {}", addr, source))]
@@ -33,7 +31,11 @@ pub enum RegistrarError {
     },
 
     /// Failed to parse a hostname string.
-    #[snafu(display("Failed to parse address {}. {}. Please use CIDR notation!", addr, source))]
+    #[snafu(display(
+        "Failed to parse address {}. {}. Please use CIDR notation!",
+        addr,
+        source
+    ))]
     AddressParseFailure {
         addr: String,
         source: std::io::Error,
@@ -70,20 +72,17 @@ impl Registrar {
         let parsed = addr.to_socket_addrs().context(AddressParseFailure{addr: &addr})?
             .next()
             .expect("Somehow parsing the hostname succeeded, but to_socket_addrs didn't populate anything. THIS IS A BUG!");
-        let poll = Poll::new().context(NewPollFailure{})?;
-        let mut server = TcpListener::bind(parsed).context(BindFailure{addr})?;
+        let poll = Poll::new().context(NewPollFailure {})?;
+        let mut server = TcpListener::bind(parsed).context(BindFailure { addr })?;
 
         poll.registry()
             .register(&mut server, REGISTRAR, Interest::READABLE)?;
 
-        Ok(Self {
-            poll,
-            server,
-        })
+        Ok(Self { poll, server })
     }
 
     /// Run the registrar.
-    pub fn run(&mut self) -> Result<(), Box<dyn std::error::Error>> { 
+    pub fn run(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let mut connections = HashMap::new();
         let mut unique_token = Token(REGISTRAR.0 + 1);
         let mut events = Events::with_capacity(128);
@@ -95,43 +94,50 @@ impl Registrar {
         loop {
             self.poll.poll(&mut events, None)?;
 
-            for event in events.into_iter() { 
+            for event in events.into_iter() {
                 trace!("Received NEW event {:?}", event);
                 match event.token() {
-                    REGISTRAR => loop {
-                        // Received an event for a TCP server socket, which means
-                        // that we, yes, finally, can accept a connection!
-                        let (mut connection, address) = match self.server.accept() {
-                            Ok((connection, address)) => (connection, address),
-                            Err(e) => {
-                                if e.kind() == std::io::ErrorKind::WouldBlock {
-                                    // We now know our listener has no more incoming connections queued,
-                                    // so we can return to polling and wait for some more.
+                    REGISTRAR => {
+                        loop {
+                            // Received an event for a TCP server socket, which means
+                            // that we, yes, finally, can accept a connection!
+                            let (mut connection, address) = match self.server.accept() {
+                                Ok((connection, address)) => (connection, address),
+                                Err(e) => {
+                                    if e.kind() == std::io::ErrorKind::WouldBlock {
+                                        // We now know our listener has no more incoming connections queued,
+                                        // so we can return to polling and wait for some more.
+                                        break;
+                                    }
+
+                                    // ):
+                                    // It was another kind of error, something went horribly, unbelievably
+                                    // wrong. We can still continue, since this has nothing to do with the
+                                    // registrar itself. We just don't respond, and the participant gets
+                                    // the memo.
+                                    warn!("An unknown error of type {:?} was encountered, not accepting.", e.kind());
                                     break;
                                 }
+                            };
 
-                                // ):
-                                // It was another kind of error, something went horribly, unbelievably
-                                // wrong. We can still continue, since this has nothing to do with the
-                                // registrar itself. We just don't respond, and the participant gets
-                                // the memo.
-                                warn!("An unknown error of type {:?} was encountered, not accepting.", e.kind());
-                                break;
-                            },
-                        };
-    
-                        info!("Accepted connection from a participant(?) at {}!", address);
+                            info!("Accepted connection from a participant(?) at {}!", address);
 
-                        // Register the connection.
-                        let token = next(&mut unique_token);
-                        self.poll.registry().register(
-                            &mut connection,
-                            token,
-                            Interest::READABLE.add(Interest::WRITABLE),
-                        ).context(ConnectionRegisterFailure{conn: &address.to_string()})?;
+                            // Register the connection.
+                            let token = next(&mut unique_token);
+                            self.poll
+                                .registry()
+                                .register(
+                                    &mut connection,
+                                    token,
+                                    Interest::READABLE.add(Interest::WRITABLE),
+                                )
+                                .context(ConnectionRegisterFailure {
+                                    conn: &address.to_string(),
+                                })?;
 
-                        connections.insert(token, connection);
-                    },
+                            connections.insert(token, connection);
+                        }
+                    }
 
                     mut token => {
                         // Quite possibly a TCP event from an ongoing connection.
@@ -142,7 +148,7 @@ impl Registrar {
                             None => {
                                 warn!("No token found for incomming connection. Connection should be registered, but the oposite is true.");
                                 continue;
-                            },
+                            }
                         };
 
                         debug!("Handling event.");
@@ -160,5 +166,3 @@ fn next(current: &mut Token) -> Token {
 
     Token(next)
 }
-
-
