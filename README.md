@@ -15,13 +15,8 @@
 CATnet is a more desentralized web for a more modern age.
 
 ## User use
-### Cloning
-Either download a .tar.gz/.zip from the green *download* button above, or clone via git:
-![Cloning](assets/cloning.png)
-```bash
-git clone https://github.com/ZincSoft/CATNET.git
-```
-### Building
+### Base Installation
+#[build and install instructions](assets/build.svg)
 ```bash
 cargo install --path .
 # or
@@ -31,14 +26,15 @@ cargo install catnet
 ### Use
 #### Participant
 Look at the help menu, then run with the flags/arguments you want!
-![Participant](assets/participant.png)
+##### Note: You may want to install a graphical client! You can find these in src/clients, or as a release.
+![Participant](assets/participant.svg)
 ```bash
 catnetd participant --help
 ```
 
 #### Registrar
 Look at the help menu, then run with the flags/arguments you want!
-![Registrar](assets/registrar.png)
+![Registrar](assets/registrar.svg)
 ```bash
 catnetd registrar --help
 ```
@@ -52,8 +48,8 @@ During development of CATnet, you may wish these flags:
 ### Git Workflow
 Pretend the other people working on this code base are insane, have a shotgun, and know where you live. As such, please follow `WORKFLOW.MD`.
 
-### Specification/White paper
-[Here](https://docs.google.com/document/d/1t3FXJTDr-h4J9iPvzBLDdCKGJAukKruhrJjNaMWRgq0/edit?ts=5fc41d5f#heading=h.3bqhl2hpdgyy) is a link to our specifications document.
+### White paper
+[Here](https://docs.google.com/document/d/1t3FXJTDr-h4J9iPvzBLDdCKGJAukKruhrJjNaMWRgq0/edit?ts=5fc41d5f#heading=h.3bqhl2hpdgyy) is a link to our whitepaper document.
 
 ### Contributing
 [![GitHub last commit](https://img.shields.io/github/last-commit/zincsoft/catnet.svg?style=flat)]()
