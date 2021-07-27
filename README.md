@@ -18,9 +18,7 @@ CATnet is a more desentralized web for a more modern age.
 ### Base Installation
 ![build and install instructions](assets/build.svg)
 ```bash
-cargo install --path .
-# or
-cargo install catnet
+cargo install --git https://github.com/ZincSoft/CATNET.git
 ```
 
 ### Use
@@ -29,14 +27,14 @@ Look at the help menu, then run with the flags/arguments you want!
 ##### Note: You may want to install a graphical client! You can find these in src/clients, or as a release.
 ![Participant](assets/participant.svg)
 ```bash
-catnetd participant --help
+catnetd participant -l3
 ```
 
 #### Registrar
 Look at the help menu, then run with the flags/arguments you want!
 ![Registrar](assets/registrar.svg)
 ```bash
-catnetd registrar --help
+catnetd registrar -l3
 ```
 
 
