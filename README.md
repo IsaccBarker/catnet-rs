@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/github/last-commit/ZincSoft/Catnet.svg" alt="Last Commit">
   <img src="https://img.shields.io/aur/last-modified/Catnet.svg" alt="AUR Last Modified">
 </p>
-CATnet is a more desentralized web for a more modern age.
+CATnet is a more desentralized web for a more modern age. It enables you to distribute your packets on your local network. Onion Routing, but improved.
 
 ## User use
 ### Base Installation
