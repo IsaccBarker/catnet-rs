@@ -16,7 +16,7 @@ CATnet is a more desentralized web for a more modern age.
 
 ## User use
 ### Base Installation
-#[build and install instructions](assets/build.svg)
+![build and install instructions](assets/build.svg)
 ```bash
 cargo install --path .
 # or
