@@ -1,3 +1,5 @@
+## Note: This project is NOT abandoned. The team behind this are simply occupied with school.
+
 # CATnet
 <p align="center">
   <a href="https://github.com/ZincSoft/CATNET" target="blank"><img src="assets/logo.png" alt="CATNET Logo" /></a>
